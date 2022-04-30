@@ -23,17 +23,21 @@ export const TodoApp = () => {
 
 
     const handleDelete = ( todoId ) => {
-        console.log(todoId)
-
-        //crear la accion
+    
         const action = {
             type: 'eliminar',
             payload : todoId
         }
-        //dispatch
+        
         dispatch( action )
     }
 
+    const handleToogle = (todoId) => {
+        dispatch({
+            type: 'tachar',
+            payload:todoId
+        })
+    }
  
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -60,19 +64,22 @@ export const TodoApp = () => {
 
     return (
         <>
-            <h1>TodoApp ({todos.length}) </h1>
+            <h1 className='text-center white'>TodoApp  </h1>
 
-            <div className='row'>
+            { todos.length === 0 && <p className='text-center white h5'>Bienvenido a TodoApp para comenzar ingrese un nuevo todo..</p> }
+            
 
-                <div className='col-7'>
+            <div className='container'>
+
+                <div >
                     <ul className='list-group list-group-flush'>
                         {
                             todos.map ( (todo, i) => {
                                 return <li
                                             key={todo.id}
-                                            className = 'list-group-item'
+                                            className = 'list-group-item mt-2 rounded'
                                         >
-                                            <p className='text-center'>{i + 1 }. {todo.desc}</p> 
+                                            <p className= { `${todo.done && 'complete'} `  } onClick={() => handleToogle(todo.id)}>{i + 1 }. {todo.desc}</p> 
                                             <button className="btn btn-danger" onClick={ () => handleDelete( todo.id )}>Borrar</button>
                                         </li>
                             })
@@ -80,11 +87,11 @@ export const TodoApp = () => {
                     </ul>
                 </div>
 
-                <div className='col-5'>
+                <div >
 
-                    <h4>Agregar un todo</h4>
+                    <h2 className='mt-4 text-center white'>Agregar un todo</h2>
 
-                    <form onSubmit={handleSubmit}>
+                    <form className='mt-3' onSubmit={handleSubmit}>
 
                         <input
                             type="text"
@@ -109,7 +116,7 @@ export const TodoApp = () => {
 
             </div>
 
-            
+        
 
         </>
     )

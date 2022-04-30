@@ -1,5 +1,7 @@
 body{
     padding: 50px;
+    background-color: black;
+   
 }
 
 .list-group-item{
@@ -15,4 +17,8 @@ p{
 
 .complete{
     text-decoration: line-through;
+}
+
+.white{
+    color: white;
 }
