@@ -1,25 +1,50 @@
-import React, { useReducer } from 'react'
+import React, { useEffect, useReducer } from 'react'
 import { todoReducer } from './todoReducer';
+import { useForm } from './hooks/useForm';
 import './styles.css'
 
-const initialState = [{
-    id: new Date().getTime(),
-    desc: 'Aprender React',
-    done : false
-}];
+
+const init = () => {
+
+    return JSON.parse(localStorage.getItem('todos')) || [];
+}
 
 export const TodoApp = () => {
 
-    const [todos ,dispatch ] = useReducer(todoReducer, initialState)
+    const [todos ,dispatch ] = useReducer(todoReducer, [] , init);
 
-  
+    const [{descripcion}, handleInputChange, resetear] = useForm(  {
+        descripcion : ''
+    })
 
+    useEffect ( () => {
+        localStorage.setItem('todos', JSON.stringify( todos ) )
+    }, [todos] ) 
+
+
+    const handleDelete = ( todoId ) => {
+        console.log(todoId)
+
+        //crear la accion
+        const action = {
+            type: 'eliminar',
+            payload : todoId
+        }
+        //dispatch
+        dispatch( action )
+    }
+
+ 
     const handleSubmit = (e) => {
         e.preventDefault();
 
+        if (descripcion.length <= 1  ) {
+            return;
+        }
+
         const newTodo = {
             id: new Date().getTime(),
-            desc: 'Nueva tarea',
+            desc: descripcion,
             done : false
         }
 
@@ -29,9 +54,10 @@ export const TodoApp = () => {
         }
 
         dispatch( action )
+        resetear();
     }
     
-     console.log(todos)
+
     return (
         <>
             <h1>TodoApp ({todos.length}) </h1>
@@ -47,7 +73,7 @@ export const TodoApp = () => {
                                             className = 'list-group-item'
                                         >
                                             <p className='text-center'>{i + 1 }. {todo.desc}</p> 
-                                            <button className="btn btn-danger">Borrar</button>
+                                            <button className="btn btn-danger" onClick={ () => handleDelete( todo.id )}>Borrar</button>
                                         </li>
                             })
                         }
@@ -62,10 +88,12 @@ export const TodoApp = () => {
 
                         <input
                             type="text"
-                            name='description'
+                            name='descripcion'
                             className='form-control'
                             placeholder='Aprender...'
                             autoComplete='off'
+                            onChange={handleInputChange}
+                            value = {descripcion}
                         />
 
                         <button 
